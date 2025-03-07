@@ -2,7 +2,7 @@ import fifteen/utils
 import gleam/int
 import gleam/list
 import lustre
-import lustre/attribute
+import lustre/attribute.{class, id, src, style}
 import lustre/element/html
 import lustre/event
 
@@ -48,32 +48,27 @@ fn update(model: Model, msg: Msg) -> Model {
 
 pub fn view(model: Model) {
   html.div([], [
-    html.div([attribute.class("centered")], [
-      html.img([
-        attribute.src("/priv/static/image/logo.png"),
-        attribute.id("logo"),
-      ]),
+    html.div([class("centered")], [
+      html.img([src("/priv/static/image/logo.png"), id("logo")]),
     ]),
-    html.div([attribute.class("centered")], [
+    html.div([class("centered")], [
       html.div(
-        [attribute.class("game-container")],
+        [class("game-container")],
         list.index_map(model.tiles, fn(tile, idx) {
           let row = idx / 4
           let col = idx % 4
 
-          let style = [
+          let styles = [
             #("top", int.to_string(row * tile_size + tile_gap) <> "px"),
             #("left", int.to_string(col * tile_size + tile_gap) <> "px"),
           ]
 
           case tile {
             0 -> {
-              html.div([attribute.class("tile empty"), attribute.style(style)], [
-                html.text(""),
-              ])
+              html.div([class("tile empty"), style(styles)], [html.text("")])
             }
             _ -> {
-              html.div([attribute.class("tile"), attribute.style(style)], [
+              html.div([class("tile"), style(styles)], [
                 html.text(int.to_string(tile)),
               ])
             }
@@ -81,8 +76,8 @@ pub fn view(model: Model) {
         }),
       ),
     ]),
-    html.div([attribute.class("centered")], [
-      html.button([attribute.class("shuffle-btn"), event.on_click(Shuffle)], [
+    html.div([class("centered")], [
+      html.button([class("shuffle-btn"), event.on_click(Shuffle)], [
         html.text("Shuffle"),
       ]),
     ]),
