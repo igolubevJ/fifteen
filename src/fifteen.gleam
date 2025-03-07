@@ -13,7 +13,12 @@ pub fn main() {
             attribute.id("logo"),
           ]),
         ]),
-        html.h1([], [element.text("Hello, from fifteen gleams!")]),
+        html.div([attribute.class("centered")], [
+          html.div([attribute.class("game-container")], []),
+        ]),
+        html.div([attribute.class("centered")], [
+          html.button([attribute.class("shuffle-btn")], [html.text("Shuffle")]),
+        ]),
       ]),
     )
 

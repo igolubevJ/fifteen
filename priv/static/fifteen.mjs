@@ -1913,14 +1913,17 @@ function start2(app, selector, flags) {
 }
 
 // build/dev/javascript/lustre/lustre/element/html.mjs
-function h1(attrs, children2) {
-  return element("h1", attrs, children2);
+function text2(content) {
+  return text(content);
 }
 function div(attrs, children2) {
   return element("div", attrs, children2);
 }
 function img(attrs) {
   return element("img", attrs, toList([]));
+}
+function button(attrs, children2) {
+  return element("button", attrs, children2);
 }
 
 // build/dev/javascript/fifteen/fifteen.mjs
@@ -1940,9 +1943,20 @@ function main() {
             )
           ])
         ),
-        h1(
-          toList([]),
-          toList([text("Hello, from fifteen gleams!")])
+        div(
+          toList([class$("centered")]),
+          toList([
+            div(toList([class$("game-container")]), toList([]))
+          ])
+        ),
+        div(
+          toList([class$("centered")]),
+          toList([
+            button(
+              toList([class$("shuffle-btn")]),
+              toList([text2("Shuffle")])
+            )
+          ])
         )
       ])
     )
@@ -1952,7 +1966,7 @@ function main() {
     throw makeError(
       "let_assert",
       "fifteen",
-      20,
+      25,
       "main",
       "Pattern match failed, no pattern matched the value.",
       { value: $ }

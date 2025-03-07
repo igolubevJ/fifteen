@@ -23,12 +23,14 @@ body {
   background-color: var(--background-color);
   color: var(--white-color);
 
+  font-family: var(--fonts);
+}
+
+#app {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
-  font-family: var(--fonts);
 }
 
 #logo {
@@ -36,6 +38,39 @@ body {
   height: auto;
   text-align: center;
   margin: 0px auto;
+}
+
+.game-container {
+  position: relative;
+  width: 390px;
+  height: 390px;
+  background-color: var(--desk-color);
+  border: 5px solid var(--primary-color);
+  border-radius: 5px;
+}
+
+.shuffle-btn {
+  display: block;
+  position: relative;
+  top: 20px;
+  padding: 10px 30px;
+  font-family: var(--fonts);
+  font-size: 1.5rem;
+  background-color: var(--secondary-color);
+  color: var(--white-color);
+  border: none;
+  border-radius: 5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: 0.4s;
+}
+
+.shuffle-btn:hover {
+  background-color: var(--primary-color);
+}
+
+.shuffle-btn:active {
+  background-color: var(--tile-color);
 }
 
 .centered {
