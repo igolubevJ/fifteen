@@ -6,4 +6,7 @@ pub fn main() {
 
   let res = utils.generate_tiles(from: 0, to: 15)
   io.debug(res)
+
+  io.debug(res |> utils.shuffled_tile)
+  io.debug(res |> utils.shuffled_tile)
 }
