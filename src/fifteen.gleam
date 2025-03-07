@@ -1,12 +1,22 @@
-import fifteen/utils
-import gleam/io
+import lustre
+import lustre/attribute
+import lustre/element
+import lustre/element/html
 
 pub fn main() {
-  io.println("Hello from fifteen!")
+  let app =
+    lustre.element(
+      html.div([], [
+        html.div([attribute.class("centered")], [
+          html.img([
+            attribute.src("/priv/static/image/logo.png"),
+            attribute.id("logo"),
+          ]),
+        ]),
+        html.h1([], [element.text("Hello, from fifteen gleams!")]),
+      ]),
+    )
 
-  let res = utils.generate_tiles(from: 0, to: 15)
-  io.debug(res)
-
-  io.debug(res |> utils.shuffled_tile)
-  io.debug(res |> utils.shuffled_tile)
+  let assert Ok(_) = lustre.start(app, "#app", Nil)
+  Nil
 }
