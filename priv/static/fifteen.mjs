@@ -1691,13 +1691,13 @@ var LustreClientApplication = class _LustreClientApplication {
    *
    * @returns {Gleam.Ok<(action: Lustre.Action<Lustre.Client, Msg>>) => void>}
    */
-  static start({ init: init2, update, view }, selector, flags) {
+  static start({ init: init2, update, view: view2 }, selector, flags) {
     if (!is_browser())
       return new Error(new NotABrowser());
     const root = selector instanceof HTMLElement ? selector : document.querySelector(selector);
     if (!root)
       return new Error(new ElementNotFound(selector));
-    const app = new _LustreClientApplication(root, init2(flags), update, view);
+    const app = new _LustreClientApplication(root, init2(flags), update, view2);
     return new Ok((action) => app.send(action));
   }
   /**
@@ -1708,11 +1708,11 @@ var LustreClientApplication = class _LustreClientApplication {
    *
    * @returns {LustreClientApplication}
    */
-  constructor(root, [init2, effects], update, view) {
+  constructor(root, [init2, effects], update, view2) {
     this.root = root;
     this.#model = init2;
     this.#update = update;
-    this.#view = view;
+    this.#view = view2;
     this.#tickScheduled = window.setTimeout(
       () => this.#tick(effects.all.toArray(), true),
       0
@@ -1827,20 +1827,20 @@ var LustreClientApplication = class _LustreClientApplication {
 };
 var start = LustreClientApplication.start;
 var LustreServerApplication = class _LustreServerApplication {
-  static start({ init: init2, update, view, on_attribute_change }, flags) {
+  static start({ init: init2, update, view: view2, on_attribute_change }, flags) {
     const app = new _LustreServerApplication(
       init2(flags),
       update,
-      view,
+      view2,
       on_attribute_change
     );
     return new Ok((action) => app.send(action));
   }
-  constructor([model, effects], update, view, on_attribute_change) {
+  constructor([model, effects], update, view2, on_attribute_change) {
     this.#model = model;
     this.#update = update;
-    this.#view = view;
-    this.#html = view(model);
+    this.#view = view2;
+    this.#html = view2(model);
     this.#onAttributeChange = on_attribute_change;
     this.#renderers = /* @__PURE__ */ new Map();
     this.#handlers = handlers(this.#html);
@@ -1941,11 +1941,11 @@ var is_browser = () => globalThis.window && window.document;
 
 // build/dev/javascript/lustre/lustre.mjs
 var App = class extends CustomType {
-  constructor(init2, update, view, on_attribute_change) {
+  constructor(init2, update, view2, on_attribute_change) {
     super();
     this.init = init2;
     this.update = update;
-    this.view = view;
+    this.view = view2;
     this.on_attribute_change = on_attribute_change;
   }
 };
@@ -1957,8 +1957,8 @@ var ElementNotFound = class extends CustomType {
 };
 var NotABrowser = class extends CustomType {
 };
-function application(init2, update, view) {
-  return new App(init2, update, view, new None());
+function application(init2, update, view2) {
+  return new App(init2, update, view2, new None());
 }
 function element2(html) {
   let init2 = (_) => {
@@ -1967,10 +1967,10 @@ function element2(html) {
   let update = (_, _1) => {
     return [void 0, none()];
   };
-  let view = (_) => {
+  let view2 = (_) => {
     return html;
   };
-  return application(init2, update, view);
+  return application(init2, update, view2);
 }
 function start2(app, selector, flags) {
   return guard(
@@ -2028,9 +2028,8 @@ function initial_model() {
 }
 var tile_size = 100;
 var tile_gap = 6;
-function main() {
-  let model = initial_model();
-  let app = element2(
+function view(model) {
+  return element2(
     div(
       toList([]),
       toList([
@@ -2093,12 +2092,16 @@ function main() {
       ])
     )
   );
+}
+function main() {
+  let model = initial_model();
+  let app = view(model);
   let $ = start2(app, "#app", void 0);
   if (!$.isOk()) {
     throw makeError(
       "let_assert",
       "fifteen",
-      60,
+      19,
       "main",
       "Pattern match failed, no pattern matched the value.",
       { value: $ }
