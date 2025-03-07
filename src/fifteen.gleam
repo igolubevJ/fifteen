@@ -9,8 +9,10 @@ const tile_size = 100
 
 const tile_gap = 6
 
+// MAIN ----------------------------------------------------------------
+
 pub fn main() {
-  let tiles = utils.generate_tiles(from: 0, to: 15)
+  let model = initial_model()
 
   let app =
     lustre.element(
@@ -24,7 +26,7 @@ pub fn main() {
         html.div([attribute.class("centered")], [
           html.div(
             [attribute.class("game-container")],
-            list.index_map(tiles, fn(tile, idx) {
+            list.index_map(model.tiles, fn(tile, idx) {
               let row = idx / 4
               let col = idx % 4
 
@@ -57,4 +59,17 @@ pub fn main() {
 
   let assert Ok(_) = lustre.start(app, "#app", Nil)
   Nil
+}
+
+// MODEL ------------------------------------------------------------------
+
+pub type Tile =
+  Int
+
+pub type Model {
+  Model(tiles: List(Tile))
+}
+
+pub fn initial_model() -> Model {
+  Model(tiles: utils.generate_tiles(from: 0, to: 15))
 }

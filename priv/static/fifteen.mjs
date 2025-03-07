@@ -2017,10 +2017,19 @@ function generate_tiles(from, to) {
 }
 
 // build/dev/javascript/fifteen/fifteen.mjs
+var Model2 = class extends CustomType {
+  constructor(tiles) {
+    super();
+    this.tiles = tiles;
+  }
+};
+function initial_model() {
+  return new Model2(generate_tiles(0, 15));
+}
 var tile_size = 100;
 var tile_gap = 6;
 function main() {
-  let tiles = generate_tiles(0, 15);
+  let model = initial_model();
   let app = element2(
     div(
       toList([]),
@@ -2042,7 +2051,7 @@ function main() {
             div(
               toList([class$("game-container")]),
               index_map(
-                tiles,
+                model.tiles,
                 (tile, idx) => {
                   let row = divideInt(idx, 4);
                   let col = remainderInt(idx, 4);
@@ -2089,7 +2098,7 @@ function main() {
     throw makeError(
       "let_assert",
       "fifteen",
-      58,
+      60,
       "main",
       "Pattern match failed, no pattern matched the value.",
       { value: $ }
