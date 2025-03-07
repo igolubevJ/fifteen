@@ -47,8 +47,8 @@ var List = class {
     return length2;
   }
 };
-function prepend(element3, tail) {
-  return new NonEmpty(element3, tail);
+function prepend(element2, tail) {
+  return new NonEmpty(element2, tail);
 }
 function toList(elements2, tail) {
   return List.fromArray(elements2, tail);
@@ -198,6 +198,14 @@ function makeError(variant, module, line, fn, message, extra) {
   return error;
 }
 
+// build/dev/javascript/gleam_stdlib/gleam/order.mjs
+var Lt = class extends CustomType {
+};
+var Eq = class extends CustomType {
+};
+var Gt = class extends CustomType {
+};
+
 // build/dev/javascript/gleam_stdlib/gleam/option.mjs
 var None = class extends CustomType {
 };
@@ -239,6 +247,10 @@ function keys(dict2) {
 }
 
 // build/dev/javascript/gleam_stdlib/gleam/list.mjs
+var Ascending = class extends CustomType {
+};
+var Descending = class extends CustomType {
+};
 function reverse_and_prepend(loop$prefix, loop$suffix) {
   while (true) {
     let prefix = loop$prefix;
@@ -315,23 +327,374 @@ function index_fold_loop(loop$over, loop$acc, loop$with, loop$index) {
 function index_fold(list2, initial, fun) {
   return index_fold_loop(list2, initial, fun, 0);
 }
+function sequences(loop$list, loop$compare, loop$growing, loop$direction, loop$prev, loop$acc) {
+  while (true) {
+    let list2 = loop$list;
+    let compare3 = loop$compare;
+    let growing = loop$growing;
+    let direction = loop$direction;
+    let prev = loop$prev;
+    let acc = loop$acc;
+    let growing$1 = prepend(prev, growing);
+    if (list2.hasLength(0)) {
+      if (direction instanceof Ascending) {
+        return prepend(reverse(growing$1), acc);
+      } else {
+        return prepend(growing$1, acc);
+      }
+    } else {
+      let new$1 = list2.head;
+      let rest$1 = list2.tail;
+      let $ = compare3(prev, new$1);
+      if ($ instanceof Gt && direction instanceof Descending) {
+        loop$list = rest$1;
+        loop$compare = compare3;
+        loop$growing = growing$1;
+        loop$direction = direction;
+        loop$prev = new$1;
+        loop$acc = acc;
+      } else if ($ instanceof Lt && direction instanceof Ascending) {
+        loop$list = rest$1;
+        loop$compare = compare3;
+        loop$growing = growing$1;
+        loop$direction = direction;
+        loop$prev = new$1;
+        loop$acc = acc;
+      } else if ($ instanceof Eq && direction instanceof Ascending) {
+        loop$list = rest$1;
+        loop$compare = compare3;
+        loop$growing = growing$1;
+        loop$direction = direction;
+        loop$prev = new$1;
+        loop$acc = acc;
+      } else if ($ instanceof Gt && direction instanceof Ascending) {
+        let acc$1 = (() => {
+          if (direction instanceof Ascending) {
+            return prepend(reverse(growing$1), acc);
+          } else {
+            return prepend(growing$1, acc);
+          }
+        })();
+        if (rest$1.hasLength(0)) {
+          return prepend(toList([new$1]), acc$1);
+        } else {
+          let next = rest$1.head;
+          let rest$2 = rest$1.tail;
+          let direction$1 = (() => {
+            let $1 = compare3(new$1, next);
+            if ($1 instanceof Lt) {
+              return new Ascending();
+            } else if ($1 instanceof Eq) {
+              return new Ascending();
+            } else {
+              return new Descending();
+            }
+          })();
+          loop$list = rest$2;
+          loop$compare = compare3;
+          loop$growing = toList([new$1]);
+          loop$direction = direction$1;
+          loop$prev = next;
+          loop$acc = acc$1;
+        }
+      } else if ($ instanceof Lt && direction instanceof Descending) {
+        let acc$1 = (() => {
+          if (direction instanceof Ascending) {
+            return prepend(reverse(growing$1), acc);
+          } else {
+            return prepend(growing$1, acc);
+          }
+        })();
+        if (rest$1.hasLength(0)) {
+          return prepend(toList([new$1]), acc$1);
+        } else {
+          let next = rest$1.head;
+          let rest$2 = rest$1.tail;
+          let direction$1 = (() => {
+            let $1 = compare3(new$1, next);
+            if ($1 instanceof Lt) {
+              return new Ascending();
+            } else if ($1 instanceof Eq) {
+              return new Ascending();
+            } else {
+              return new Descending();
+            }
+          })();
+          loop$list = rest$2;
+          loop$compare = compare3;
+          loop$growing = toList([new$1]);
+          loop$direction = direction$1;
+          loop$prev = next;
+          loop$acc = acc$1;
+        }
+      } else {
+        let acc$1 = (() => {
+          if (direction instanceof Ascending) {
+            return prepend(reverse(growing$1), acc);
+          } else {
+            return prepend(growing$1, acc);
+          }
+        })();
+        if (rest$1.hasLength(0)) {
+          return prepend(toList([new$1]), acc$1);
+        } else {
+          let next = rest$1.head;
+          let rest$2 = rest$1.tail;
+          let direction$1 = (() => {
+            let $1 = compare3(new$1, next);
+            if ($1 instanceof Lt) {
+              return new Ascending();
+            } else if ($1 instanceof Eq) {
+              return new Ascending();
+            } else {
+              return new Descending();
+            }
+          })();
+          loop$list = rest$2;
+          loop$compare = compare3;
+          loop$growing = toList([new$1]);
+          loop$direction = direction$1;
+          loop$prev = next;
+          loop$acc = acc$1;
+        }
+      }
+    }
+  }
+}
+function merge_ascendings(loop$list1, loop$list2, loop$compare, loop$acc) {
+  while (true) {
+    let list1 = loop$list1;
+    let list2 = loop$list2;
+    let compare3 = loop$compare;
+    let acc = loop$acc;
+    if (list1.hasLength(0)) {
+      let list3 = list2;
+      return reverse_and_prepend(list3, acc);
+    } else if (list2.hasLength(0)) {
+      let list3 = list1;
+      return reverse_and_prepend(list3, acc);
+    } else {
+      let first1 = list1.head;
+      let rest1 = list1.tail;
+      let first2 = list2.head;
+      let rest2 = list2.tail;
+      let $ = compare3(first1, first2);
+      if ($ instanceof Lt) {
+        loop$list1 = rest1;
+        loop$list2 = list2;
+        loop$compare = compare3;
+        loop$acc = prepend(first1, acc);
+      } else if ($ instanceof Gt) {
+        loop$list1 = list1;
+        loop$list2 = rest2;
+        loop$compare = compare3;
+        loop$acc = prepend(first2, acc);
+      } else {
+        loop$list1 = list1;
+        loop$list2 = rest2;
+        loop$compare = compare3;
+        loop$acc = prepend(first2, acc);
+      }
+    }
+  }
+}
+function merge_ascending_pairs(loop$sequences, loop$compare, loop$acc) {
+  while (true) {
+    let sequences2 = loop$sequences;
+    let compare3 = loop$compare;
+    let acc = loop$acc;
+    if (sequences2.hasLength(0)) {
+      return reverse(acc);
+    } else if (sequences2.hasLength(1)) {
+      let sequence = sequences2.head;
+      return reverse(prepend(reverse(sequence), acc));
+    } else {
+      let ascending1 = sequences2.head;
+      let ascending2 = sequences2.tail.head;
+      let rest$1 = sequences2.tail.tail;
+      let descending = merge_ascendings(
+        ascending1,
+        ascending2,
+        compare3,
+        toList([])
+      );
+      loop$sequences = rest$1;
+      loop$compare = compare3;
+      loop$acc = prepend(descending, acc);
+    }
+  }
+}
+function merge_descendings(loop$list1, loop$list2, loop$compare, loop$acc) {
+  while (true) {
+    let list1 = loop$list1;
+    let list2 = loop$list2;
+    let compare3 = loop$compare;
+    let acc = loop$acc;
+    if (list1.hasLength(0)) {
+      let list3 = list2;
+      return reverse_and_prepend(list3, acc);
+    } else if (list2.hasLength(0)) {
+      let list3 = list1;
+      return reverse_and_prepend(list3, acc);
+    } else {
+      let first1 = list1.head;
+      let rest1 = list1.tail;
+      let first2 = list2.head;
+      let rest2 = list2.tail;
+      let $ = compare3(first1, first2);
+      if ($ instanceof Lt) {
+        loop$list1 = list1;
+        loop$list2 = rest2;
+        loop$compare = compare3;
+        loop$acc = prepend(first2, acc);
+      } else if ($ instanceof Gt) {
+        loop$list1 = rest1;
+        loop$list2 = list2;
+        loop$compare = compare3;
+        loop$acc = prepend(first1, acc);
+      } else {
+        loop$list1 = rest1;
+        loop$list2 = list2;
+        loop$compare = compare3;
+        loop$acc = prepend(first1, acc);
+      }
+    }
+  }
+}
+function merge_descending_pairs(loop$sequences, loop$compare, loop$acc) {
+  while (true) {
+    let sequences2 = loop$sequences;
+    let compare3 = loop$compare;
+    let acc = loop$acc;
+    if (sequences2.hasLength(0)) {
+      return reverse(acc);
+    } else if (sequences2.hasLength(1)) {
+      let sequence = sequences2.head;
+      return reverse(prepend(reverse(sequence), acc));
+    } else {
+      let descending1 = sequences2.head;
+      let descending2 = sequences2.tail.head;
+      let rest$1 = sequences2.tail.tail;
+      let ascending = merge_descendings(
+        descending1,
+        descending2,
+        compare3,
+        toList([])
+      );
+      loop$sequences = rest$1;
+      loop$compare = compare3;
+      loop$acc = prepend(ascending, acc);
+    }
+  }
+}
+function merge_all(loop$sequences, loop$direction, loop$compare) {
+  while (true) {
+    let sequences2 = loop$sequences;
+    let direction = loop$direction;
+    let compare3 = loop$compare;
+    if (sequences2.hasLength(0)) {
+      return toList([]);
+    } else if (sequences2.hasLength(1) && direction instanceof Ascending) {
+      let sequence = sequences2.head;
+      return sequence;
+    } else if (sequences2.hasLength(1) && direction instanceof Descending) {
+      let sequence = sequences2.head;
+      return reverse(sequence);
+    } else if (direction instanceof Ascending) {
+      let sequences$1 = merge_ascending_pairs(sequences2, compare3, toList([]));
+      loop$sequences = sequences$1;
+      loop$direction = new Descending();
+      loop$compare = compare3;
+    } else {
+      let sequences$1 = merge_descending_pairs(sequences2, compare3, toList([]));
+      loop$sequences = sequences$1;
+      loop$direction = new Ascending();
+      loop$compare = compare3;
+    }
+  }
+}
+function sort(list2, compare3) {
+  if (list2.hasLength(0)) {
+    return toList([]);
+  } else if (list2.hasLength(1)) {
+    let x = list2.head;
+    return toList([x]);
+  } else {
+    let x = list2.head;
+    let y = list2.tail.head;
+    let rest$1 = list2.tail.tail;
+    let direction = (() => {
+      let $ = compare3(x, y);
+      if ($ instanceof Lt) {
+        return new Ascending();
+      } else if ($ instanceof Eq) {
+        return new Ascending();
+      } else {
+        return new Descending();
+      }
+    })();
+    let sequences$1 = sequences(
+      rest$1,
+      compare3,
+      toList([x]),
+      direction,
+      y,
+      toList([])
+    );
+    return merge_all(sequences$1, new Ascending(), compare3);
+  }
+}
+function shuffle_pair_unwrap_loop(loop$list, loop$acc) {
+  while (true) {
+    let list2 = loop$list;
+    let acc = loop$acc;
+    if (list2.hasLength(0)) {
+      return acc;
+    } else {
+      let elem_pair = list2.head;
+      let enumerable = list2.tail;
+      loop$list = enumerable;
+      loop$acc = prepend(elem_pair[1], acc);
+    }
+  }
+}
+function do_shuffle_by_pair_indexes(list_of_pairs) {
+  return sort(
+    list_of_pairs,
+    (a_pair, b_pair) => {
+      return compare(a_pair[0], b_pair[0]);
+    }
+  );
+}
+function shuffle(list2) {
+  let _pipe = list2;
+  let _pipe$1 = fold(
+    _pipe,
+    toList([]),
+    (acc, a) => {
+      return prepend([random_uniform(), a], acc);
+    }
+  );
+  let _pipe$2 = do_shuffle_by_pair_indexes(_pipe$1);
+  return shuffle_pair_unwrap_loop(_pipe$2, toList([]));
+}
 
 // build/dev/javascript/gleam_stdlib/gleam/string.mjs
 function drop_start(loop$string, loop$num_graphemes) {
   while (true) {
-    let string3 = loop$string;
+    let string4 = loop$string;
     let num_graphemes = loop$num_graphemes;
     let $ = num_graphemes > 0;
     if (!$) {
-      return string3;
+      return string4;
     } else {
-      let $1 = pop_grapheme(string3);
+      let $1 = pop_grapheme(string4);
       if ($1.isOk()) {
         let string$1 = $1[0][1];
         loop$string = string$1;
         loop$num_graphemes = num_graphemes - 1;
       } else {
-        return string3;
+        return string4;
       }
     }
   }
@@ -1052,22 +1415,22 @@ function to_string(term) {
   return term.toString();
 }
 var segmenter = void 0;
-function graphemes_iterator(string3) {
+function graphemes_iterator(string4) {
   if (globalThis.Intl && Intl.Segmenter) {
     segmenter ||= new Intl.Segmenter();
-    return segmenter.segment(string3)[Symbol.iterator]();
+    return segmenter.segment(string4)[Symbol.iterator]();
   }
 }
-function pop_grapheme(string3) {
+function pop_grapheme(string4) {
   let first2;
-  const iterator = graphemes_iterator(string3);
+  const iterator = graphemes_iterator(string4);
   if (iterator) {
     first2 = iterator.next().value?.segment;
   } else {
-    first2 = string3.match(/./su)?.[0];
+    first2 = string4.match(/./su)?.[0];
   }
   if (first2) {
-    return new Ok([first2, string3.slice(first2.length)]);
+    return new Ok([first2, string4.slice(first2.length)]);
   } else {
     return new Error(Nil);
   }
@@ -1094,6 +1457,13 @@ var unicode_whitespaces = [
 ].join("");
 var trim_start_regex = new RegExp(`^[${unicode_whitespaces}]*`);
 var trim_end_regex = new RegExp(`[${unicode_whitespaces}]*$`);
+function random_uniform() {
+  const random_uniform_result = Math.random();
+  if (random_uniform_result === 1) {
+    return random_uniform();
+  }
+  return random_uniform_result;
+}
 function new_map() {
   return Dict.new();
 }
@@ -1102,6 +1472,21 @@ function map_to_list(map4) {
 }
 function map_insert(key, value, map4) {
   return map4.set(key, value);
+}
+
+// build/dev/javascript/gleam_stdlib/gleam/float.mjs
+function compare(a, b) {
+  let $ = a === b;
+  if ($) {
+    return new Eq();
+  } else {
+    let $1 = a < b;
+    if ($1) {
+      return new Lt();
+    } else {
+      return new Gt();
+    }
+  }
 }
 
 // build/dev/javascript/gleam_stdlib/gleam/bool.mjs
@@ -1157,6 +1542,13 @@ var Attribute = class extends CustomType {
     this.as_property = as_property;
   }
 };
+var Event = class extends CustomType {
+  constructor(x0, x1) {
+    super();
+    this[0] = x0;
+    this[1] = x1;
+  }
+};
 function attribute_to_event_handler(attribute2) {
   if (attribute2 instanceof Attribute) {
     return new Error(void 0);
@@ -1171,27 +1563,27 @@ function do_element_list_handlers(elements2, handlers2, key) {
   return index_fold(
     elements2,
     handlers2,
-    (handlers3, element3, index3) => {
+    (handlers3, element2, index3) => {
       let key$1 = key + "-" + to_string(index3);
-      return do_handlers(element3, handlers3, key$1);
+      return do_handlers(element2, handlers3, key$1);
     }
   );
 }
 function do_handlers(loop$element, loop$handlers, loop$key) {
   while (true) {
-    let element3 = loop$element;
+    let element2 = loop$element;
     let handlers2 = loop$handlers;
     let key = loop$key;
-    if (element3 instanceof Text) {
+    if (element2 instanceof Text) {
       return handlers2;
-    } else if (element3 instanceof Map2) {
-      let subtree = element3.subtree;
+    } else if (element2 instanceof Map2) {
+      let subtree = element2.subtree;
       loop$element = subtree();
       loop$handlers = handlers2;
       loop$key = key;
     } else {
-      let attrs = element3.attrs;
-      let children2 = element3.children;
+      let attrs = element2.attrs;
+      let children2 = element2.children;
       let handlers$1 = fold(
         attrs,
         handlers2,
@@ -1210,13 +1602,16 @@ function do_handlers(loop$element, loop$handlers, loop$key) {
     }
   }
 }
-function handlers(element3) {
-  return do_handlers(element3, new_map(), "0");
+function handlers(element2) {
+  return do_handlers(element2, new_map(), "0");
 }
 
 // build/dev/javascript/lustre/lustre/attribute.mjs
 function attribute(name, value) {
   return new Attribute(name, identity(value), false);
+}
+function on(name, handler) {
+  return new Event("on" + name, handler);
 }
 function style(properties) {
   return attribute(
@@ -1572,25 +1967,25 @@ function createElementNode({ prev, next, dispatch, stack }) {
   return el;
 }
 var registeredHandlers = /* @__PURE__ */ new WeakMap();
-function lustreGenericEventHandler(event) {
-  const target = event.currentTarget;
+function lustreGenericEventHandler(event2) {
+  const target = event2.currentTarget;
   if (!registeredHandlers.has(target)) {
-    target.removeEventListener(event.type, lustreGenericEventHandler);
+    target.removeEventListener(event2.type, lustreGenericEventHandler);
     return;
   }
   const handlersForEventTarget = registeredHandlers.get(target);
-  if (!handlersForEventTarget.has(event.type)) {
-    target.removeEventListener(event.type, lustreGenericEventHandler);
+  if (!handlersForEventTarget.has(event2.type)) {
+    target.removeEventListener(event2.type, lustreGenericEventHandler);
     return;
   }
-  handlersForEventTarget.get(event.type)(event);
+  handlersForEventTarget.get(event2.type)(event2);
 }
-function lustreServerEventHandler(event) {
-  const el = event.currentTarget;
-  const tag = el.getAttribute(`data-lustre-on-${event.type}`);
+function lustreServerEventHandler(event2) {
+  const el = event2.currentTarget;
+  const tag = el.getAttribute(`data-lustre-on-${event2.type}`);
   const data = JSON.parse(el.getAttribute("data-lustre-data") || "{}");
   const include = JSON.parse(el.getAttribute("data-lustre-include") || "[]");
-  switch (event.type) {
+  switch (event2.type) {
     case "input":
     case "change":
       include.push("target.value");
@@ -1601,7 +1996,7 @@ function lustreServerEventHandler(event) {
     data: include.reduce(
       (data2, property) => {
         const path = property.split(".");
-        for (let i = 0, o = data2, e = event; i < path.length; i++) {
+        for (let i = 0, o = data2, e = event2; i < path.length; i++) {
           if (i === path.length - 1) {
             o[path[i]] = e[path[i]];
           } else {
@@ -1664,16 +2059,16 @@ function diffKeyedChild(prevChild, child, el, stack, incomingKeyedChildren, keye
   stack.unshift({ prev: keyedChild, next: child, parent: el });
   return prevChild;
 }
-function* children(element3) {
-  for (const child of element3.children) {
+function* children(element2) {
+  for (const child of element2.children) {
     yield* forceChild(child);
   }
 }
-function* forceChild(element3) {
-  if (element3.subtree !== void 0) {
-    yield* forceChild(element3.subtree());
+function* forceChild(element2) {
+  if (element2.subtree !== void 0) {
+    yield* forceChild(element2.subtree());
   } else {
-    yield element3;
+    yield element2;
   }
 }
 
@@ -1691,13 +2086,13 @@ var LustreClientApplication = class _LustreClientApplication {
    *
    * @returns {Gleam.Ok<(action: Lustre.Action<Lustre.Client, Msg>>) => void>}
    */
-  static start({ init: init2, update, view: view2 }, selector, flags) {
+  static start({ init: init3, update: update2, view: view2 }, selector, flags) {
     if (!is_browser())
       return new Error(new NotABrowser());
     const root = selector instanceof HTMLElement ? selector : document.querySelector(selector);
     if (!root)
       return new Error(new ElementNotFound(selector));
-    const app = new _LustreClientApplication(root, init2(flags), update, view2);
+    const app = new _LustreClientApplication(root, init3(flags), update2, view2);
     return new Ok((action) => app.send(action));
   }
   /**
@@ -1708,10 +2103,10 @@ var LustreClientApplication = class _LustreClientApplication {
    *
    * @returns {LustreClientApplication}
    */
-  constructor(root, [init2, effects], update, view2) {
+  constructor(root, [init3, effects], update2, view2) {
     this.root = root;
-    this.#model = init2;
-    this.#update = update;
+    this.#model = init3;
+    this.#update = update2;
     this.#view = view2;
     this.#tickScheduled = window.setTimeout(
       () => this.#tick(effects.all.toArray(), true),
@@ -1732,8 +2127,8 @@ var LustreClientApplication = class _LustreClientApplication {
         this.#queue = [];
         this.#model = action[0][0];
         const vdom = this.#view(this.#model);
-        const dispatch = (handler, immediate = false) => (event) => {
-          const result = handler(event);
+        const dispatch = (handler, immediate = false) => (event2) => {
+          const result = handler(event2);
           if (result instanceof Ok) {
             this.send(new Dispatch(result[0], immediate));
           }
@@ -1752,10 +2147,10 @@ var LustreClientApplication = class _LustreClientApplication {
         this.#tickScheduled = window.setTimeout(() => this.#tick());
       }
     } else if (action instanceof Emit2) {
-      const event = action[0];
+      const event2 = action[0];
       const data = action[1];
       this.root.dispatchEvent(
-        new CustomEvent(event, {
+        new CustomEvent(event2, {
           detail: data,
           bubbles: true,
           composed: true
@@ -1789,8 +2184,8 @@ var LustreClientApplication = class _LustreClientApplication {
     this.#tickScheduled = void 0;
     this.#flush(effects);
     const vdom = this.#view(this.#model);
-    const dispatch = (handler, immediate = false) => (event) => {
-      const result = handler(event);
+    const dispatch = (handler, immediate = false) => (event2) => {
+      const result = handler(event2);
       if (result instanceof Ok) {
         this.send(new Dispatch(result[0], immediate));
       }
@@ -1808,8 +2203,8 @@ var LustreClientApplication = class _LustreClientApplication {
     while (effects.length > 0) {
       const effect = effects.shift();
       const dispatch = (msg) => this.send(new Dispatch(msg));
-      const emit2 = (event, data) => this.root.dispatchEvent(
-        new CustomEvent(event, {
+      const emit2 = (event2, data) => this.root.dispatchEvent(
+        new CustomEvent(event2, {
           detail: data,
           bubbles: true,
           composed: true
@@ -1827,18 +2222,18 @@ var LustreClientApplication = class _LustreClientApplication {
 };
 var start = LustreClientApplication.start;
 var LustreServerApplication = class _LustreServerApplication {
-  static start({ init: init2, update, view: view2, on_attribute_change }, flags) {
+  static start({ init: init3, update: update2, view: view2, on_attribute_change }, flags) {
     const app = new _LustreServerApplication(
-      init2(flags),
-      update,
+      init3(flags),
+      update2,
       view2,
       on_attribute_change
     );
     return new Ok((action) => app.send(action));
   }
-  constructor([model, effects], update, view2, on_attribute_change) {
+  constructor([model, effects], update2, view2, on_attribute_change) {
     this.#model = model;
-    this.#update = update;
+    this.#update = update2;
     this.#view = view2;
     this.#html = view2(model);
     this.#onAttributeChange = on_attribute_change;
@@ -1866,9 +2261,9 @@ var LustreServerApplication = class _LustreServerApplication {
       this.#queue.push(action[0]);
       this.#tick();
     } else if (action instanceof Emit2) {
-      const event = new Emit(action[0], action[1]);
+      const event2 = new Emit(action[0], action[1]);
       for (const [_, renderer] of this.#renderers) {
-        renderer(event);
+        renderer(event2);
       }
     } else if (action instanceof Event2) {
       const handler = this.#handlers.get(action[0]);
@@ -1919,8 +2314,8 @@ var LustreServerApplication = class _LustreServerApplication {
     while (effects.length > 0) {
       const effect = effects.shift();
       const dispatch = (msg) => this.send(new Dispatch(msg));
-      const emit2 = (event, data) => this.root.dispatchEvent(
-        new CustomEvent(event, {
+      const emit2 = (event2, data) => this.root.dispatchEvent(
+        new CustomEvent(event2, {
           detail: data,
           bubbles: true,
           composed: true
@@ -1941,10 +2336,10 @@ var is_browser = () => globalThis.window && window.document;
 
 // build/dev/javascript/lustre/lustre.mjs
 var App = class extends CustomType {
-  constructor(init2, update, view2, on_attribute_change) {
+  constructor(init3, update2, view2, on_attribute_change) {
     super();
-    this.init = init2;
-    this.update = update;
+    this.init = init3;
+    this.update = update2;
     this.view = view2;
     this.on_attribute_change = on_attribute_change;
   }
@@ -1957,20 +2352,17 @@ var ElementNotFound = class extends CustomType {
 };
 var NotABrowser = class extends CustomType {
 };
-function application(init2, update, view2) {
-  return new App(init2, update, view2, new None());
+function application(init3, update2, view2) {
+  return new App(init3, update2, view2, new None());
 }
-function element2(html) {
-  let init2 = (_) => {
-    return [void 0, none()];
+function simple(init3, update2, view2) {
+  let init$1 = (flags) => {
+    return [init3(flags), none()];
   };
-  let update = (_, _1) => {
-    return [void 0, none()];
+  let update$1 = (model, msg) => {
+    return [update2(model, msg), none()];
   };
-  let view2 = (_) => {
-    return html;
-  };
-  return application(init2, update, view2);
+  return application(init$1, update$1, view2);
 }
 function start2(app, selector, flags) {
   return guard(
@@ -1996,6 +2388,16 @@ function button(attrs, children2) {
   return element("button", attrs, children2);
 }
 
+// build/dev/javascript/lustre/lustre/event.mjs
+function on2(name, handler) {
+  return on(name, handler);
+}
+function on_click(msg) {
+  return on2("click", (_) => {
+    return new Ok(msg);
+  });
+}
+
 // build/dev/javascript/fifteen/fifteen/utils.mjs
 function generate_tiles_loop(loop$from, loop$to, loop$accamulator) {
   while (true) {
@@ -2015,6 +2417,9 @@ function generate_tiles_loop(loop$from, loop$to, loop$accamulator) {
 function generate_tiles(from, to) {
   return generate_tiles_loop(from, to, toList([]));
 }
+function shuffled_tile(tiles) {
+  return shuffle(tiles);
+}
 
 // build/dev/javascript/fifteen/fifteen.mjs
 var Model2 = class extends CustomType {
@@ -2023,85 +2428,89 @@ var Model2 = class extends CustomType {
     this.tiles = tiles;
   }
 };
-function initial_model() {
+var Shuffle = class extends CustomType {
+};
+function init2(_) {
   return new Model2(generate_tiles(0, 15));
+}
+function update(model, msg) {
+  {
+    return new Model2(shuffled_tile(model.tiles));
+  }
 }
 var tile_size = 100;
 var tile_gap = 6;
 function view(model) {
-  return element2(
-    div(
-      toList([]),
-      toList([
-        div(
-          toList([class$("centered")]),
-          toList([
-            img(
-              toList([
-                src("/priv/static/image/logo.png"),
-                id("logo")
-              ])
-            )
-          ])
-        ),
-        div(
-          toList([class$("centered")]),
-          toList([
-            div(
-              toList([class$("game-container")]),
-              index_map(
-                model.tiles,
-                (tile, idx) => {
-                  let row = divideInt(idx, 4);
-                  let col = remainderInt(idx, 4);
-                  let style2 = toList([
-                    ["top", to_string(row * tile_size + tile_gap) + "px"],
-                    ["left", to_string(col * tile_size + tile_gap) + "px"]
-                  ]);
-                  if (tile === 0) {
-                    return div(
-                      toList([
-                        class$("tile empty"),
-                        style(style2)
-                      ]),
-                      toList([text2("")])
-                    );
-                  } else {
-                    return div(
-                      toList([
-                        class$("tile"),
-                        style(style2)
-                      ]),
-                      toList([text2(to_string(tile))])
-                    );
-                  }
+  return div(
+    toList([]),
+    toList([
+      div(
+        toList([class$("centered")]),
+        toList([
+          img(
+            toList([
+              src("/priv/static/image/logo.png"),
+              id("logo")
+            ])
+          )
+        ])
+      ),
+      div(
+        toList([class$("centered")]),
+        toList([
+          div(
+            toList([class$("game-container")]),
+            index_map(
+              model.tiles,
+              (tile, idx) => {
+                let row = divideInt(idx, 4);
+                let col = remainderInt(idx, 4);
+                let style2 = toList([
+                  ["top", to_string(row * tile_size + tile_gap) + "px"],
+                  ["left", to_string(col * tile_size + tile_gap) + "px"]
+                ]);
+                if (tile === 0) {
+                  return div(
+                    toList([
+                      class$("tile empty"),
+                      style(style2)
+                    ]),
+                    toList([text2("")])
+                  );
+                } else {
+                  return div(
+                    toList([class$("tile"), style(style2)]),
+                    toList([text2(to_string(tile))])
+                  );
                 }
-              )
+              }
             )
-          ])
-        ),
-        div(
-          toList([class$("centered")]),
-          toList([
-            button(
-              toList([class$("shuffle-btn")]),
-              toList([text2("Shuffle")])
-            )
-          ])
-        )
-      ])
-    )
+          )
+        ])
+      ),
+      div(
+        toList([class$("centered")]),
+        toList([
+          button(
+            toList([
+              class$("shuffle-btn"),
+              on_click(new Shuffle())
+            ]),
+            toList([text2("Shuffle")])
+          )
+        ])
+      )
+    ])
   );
 }
 function main() {
-  let model = initial_model();
-  let app = view(model);
+  let app = simple(init2, update, view);
   let $ = start2(app, "#app", void 0);
   if (!$.isOk()) {
     throw makeError(
       "let_assert",
       "fifteen",
-      19,
+      18,
       "main",
       "Pattern match failed, no pattern matched the value.",
       { value: $ }
