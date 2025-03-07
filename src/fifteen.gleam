@@ -1,5 +1,6 @@
 import fifteen/utils
 import gleam/int
+import gleam/io
 import gleam/list
 import lustre
 import lustre/attribute.{class, id, src, style}
@@ -26,11 +27,11 @@ pub type Tile =
   Int
 
 pub type Model {
-  Model(tiles: List(Tile))
+  Model(tiles: List(Tile), empty_idx: Int)
 }
 
 pub fn init(_flags) -> Model {
-  Model(tiles: utils.generate_tiles(from: 0, to: 15))
+  Model(tiles: utils.generate_tiles(from: 0, to: 15), empty_idx: 0)
 }
 
 // UPDATE -----------------------------------------------------------------
@@ -40,7 +41,10 @@ pub type Msg {
 
 fn update(model: Model, msg: Msg) -> Model {
   case msg {
-    Shuffle -> Model(tiles: utils.shuffled_tile(model.tiles))
+    Shuffle -> {
+      let #(empty_idx, tiles) = utils.shuffled_tile(model.tiles)
+      Model(empty_idx:, tiles:)
+    }
   }
 }
 
