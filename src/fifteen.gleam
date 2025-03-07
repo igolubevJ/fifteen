@@ -1,6 +1,6 @@
+import fifteen/types.{type Tile}
 import fifteen/utils
 import gleam/int
-import gleam/io
 import gleam/list
 import lustre
 import lustre/attribute.{class, id, src, style}
@@ -22,9 +22,6 @@ pub fn main() {
 }
 
 // MODEL ------------------------------------------------------------------
-
-pub type Tile =
-  Int
 
 pub type Model {
   Model(tiles: List(Tile), empty_idx: Int)
