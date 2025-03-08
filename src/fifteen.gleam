@@ -32,8 +32,10 @@ pub fn init(_flags) -> Model {
 }
 
 // UPDATE -----------------------------------------------------------------
+
 pub type Msg {
   Shuffle
+  Move(Int, Int)
 }
 
 fn update(model: Model, msg: Msg) -> Model {
@@ -41,6 +43,17 @@ fn update(model: Model, msg: Msg) -> Model {
     Shuffle -> {
       let #(empty_idx, tiles) = utils.shuffled_tile(model.tiles)
       Model(empty_idx:, tiles:)
+    }
+    Move(idx, value) -> {
+      case idx |> utils.is_adjucent(model.empty_idx) {
+        True -> {
+          Model(
+            tiles: utils.swap_empty(model.tiles, model.empty_idx, #(idx, value)),
+            empty_idx: idx,
+          )
+        }
+        False -> model
+      }
     }
   }
 }
@@ -69,9 +82,10 @@ pub fn view(model: Model) {
               html.div([class("tile empty"), style(styles)], [html.text("")])
             }
             _ -> {
-              html.div([class("tile"), style(styles)], [
-                html.text(int.to_string(tile)),
-              ])
+              html.div(
+                [class("tile"), style(styles), event.on_click(Move(idx, tile))],
+                [html.text(int.to_string(tile))],
+              )
             }
           }
         }),
