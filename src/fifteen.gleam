@@ -7,7 +7,6 @@ import lustre/attribute.{type Attribute, class, id, src, style}
 import lustre/element.{type Element}
 import lustre/element/html
 import lustre/event
-import tardis
 
 const tile_size = 100
 
@@ -46,7 +45,7 @@ pub type Msg {
   Move(Int, Int)
 }
 
-fn update(model: Model, msg: Msg) -> Model {
+pub fn update(model: Model, msg: Msg) -> Model {
   case msg {
     Shuffle -> handle_shuffle(model)
     Move(idx, value) -> handle_move(idx, value, model)

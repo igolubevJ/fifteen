@@ -37,19 +37,18 @@ pub fn swap_empty(
 /// Simple shuffled tiles function
 pub fn shuffled_tile(tiles: List(Tile)) -> #(Int, List(Tile)) {
   let res = list.shuffle(tiles)
-
-  #(find_zero(res), res)
+  #(find_empty(res), res)
 }
 
-fn find_zero(tiles: List(Tile)) -> Int {
-  let assert Ok(idx) = find_zero_loop(tiles, 0)
+pub fn find_empty(tiles: List(Tile)) -> Int {
+  let assert Ok(idx) = find_empty_loop(tiles, 0)
   idx
 }
 
-fn find_zero_loop(tiles: List(Tile), idx: Int) -> Result(Int, String) {
+fn find_empty_loop(tiles: List(Tile), idx: Int) -> Result(Int, String) {
   case tiles {
     [el, ..] if el == 0 -> Ok(idx)
-    [_, ..rest] -> find_zero_loop(rest, idx + 1)
+    [_, ..rest] -> find_empty_loop(rest, idx + 1)
     _ -> Error("Error find element of 0 value in tiles list")
   }
 }
