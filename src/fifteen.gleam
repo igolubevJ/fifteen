@@ -6,6 +6,7 @@ import lustre
 import lustre/attribute.{class, id, src, style}
 import lustre/element/html
 import lustre/event
+import tardis
 
 const tile_size = 100
 
@@ -14,9 +15,15 @@ const tile_gap = 6
 // MAIN ----------------------------------------------------------------
 
 pub fn main() {
-  let app = lustre.simple(init, update, view)
+  let assert Ok(main) = tardis.single("main")
 
-  let assert Ok(_) = lustre.start(app, "#app", Nil)
+  let app =
+    lustre.simple(init, update, view)
+    |> tardis.wrap(with: main)
+
+  let assert Ok(_) =
+    lustre.start(app, "#app", Nil)
+    |> tardis.activate(with: main)
 
   Nil
 }
