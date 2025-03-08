@@ -6,4 +6,4 @@
 ![image](https://github.com/igolubevJ/fifteen/blob/main/priv/static/image/logo.png?raw=true)
 
 
-You can try it [here](https://67ccab64c8aa31016d1daba7--wondrous-dieffenbachia-fba542.netlify.app/)
+You can try it [here](https://wondrous-dieffenbachia-fba542.netlify.app/)
