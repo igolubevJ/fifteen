@@ -82,6 +82,10 @@ body {
   transition: 0.4s;
 
   font-size: 2rem;
+
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .tile:hover {
